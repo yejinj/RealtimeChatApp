@@ -16,11 +16,31 @@ function Chat() {
     }
   
     const socket = new WebSocket(`ws://localhost:8080?token=${token}`);
-    
-    // 수신한 메시지를 처리하는 부분
+  
     socket.onmessage = (event) => {
       const message = JSON.parse(event.data);
-      setMessages((prevMessages) => [...prevMessages, message]);
+  
+      if (message.type === 'message') {
+        setMessages((prevMessages) => [...prevMessages, message]);
+  
+        // 메시지를 읽었다는 신호를 서버로 보냄
+        socket.send(JSON.stringify({
+          to: message.from,
+          type: 'read',
+          text: message.text,  // 메시지 텍스트를 포함하여 서버에 전송
+        }));
+      }
+  
+      if (message.type === 'read') {
+        console.log('Received read status:', message);  // 디버깅용 로그
+        setMessages((prevMessages) =>
+          prevMessages.map((msg) =>
+            msg.from === 'You' && msg.text === message.text
+              ? { ...msg, read: true }
+              : msg
+          )
+        );
+      }
     };
   
     setWs(socket);
@@ -29,18 +49,24 @@ function Chat() {
       if (socket) socket.close();
     };
   }, [navigate]);
-
+  
   const sendMessage = () => {
     if (ws && ws.readyState === WebSocket.OPEN) {
-      const message = JSON.stringify({ to: recipient, text: input });
-      ws.send(message);
+      const message = {
+        to: recipient,
+        text: input,
+        type: 'message',
+      };
+  
+      ws.send(JSON.stringify(message));
       setMessages((prevMessages) => [
         ...prevMessages,
-        { from: 'You', text: input }
+        { ...message, from: 'You', read: false },
       ]);
       setInput('');
     }
   };
+  
 
   return (
     <div className="chat-container">
@@ -48,6 +74,7 @@ function Chat() {
         {messages.map((message, index) => (
           <div key={index} className={`message ${message.from === 'You' ? 'sent' : 'received'}`}>
             <strong>{message.from}:</strong> {message.text}
+            {message.from === 'You' && message.read && <span className="read-status"> (Read)</span>}
           </div>
         ))}
       </div>

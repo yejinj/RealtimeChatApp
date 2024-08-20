@@ -9,8 +9,8 @@ const app = express();
 const server = http.createServer(app);
 const wss = new WebSocket.Server({ server });
 
-const users = {};  // 간단한 사용자 저장소 (이메일을 키로 사용)
-const sockets = {}; // 유저별 WebSocket 저장소
+const users = {};
+const sockets = {};
 const SECRET_KEY = 'your_secret_key';
 
 app.use(cors());
@@ -51,37 +51,44 @@ app.post('/login', (req, res) => {
 
 // WebSocket 연결
 wss.on('connection', (ws, req) => {
-    const token = req.url.split('?token=')[1];
-    let email;
+  const token = req.url.split('?token=')[1];
+  let email;
+
+  try {
+    const decoded = jwt.verify(token, SECRET_KEY);
+    email = decoded.email;
+    sockets[email] = ws; // 유저별 WebSocket 저장
+  } catch (err) {
+    ws.close();
+    return;
+  }
+
+  ws.on('message', (message) => {
+    const parsedMessage = JSON.parse(message);
+    const { to, text, type } = parsedMessage;
   
-    try {
-      const decoded = jwt.verify(token, SECRET_KEY);
-      email = decoded.email;
-      sockets[email] = ws; // 유저별 WebSocket 저장
-    } catch (err) {
-      ws.close();
-      return;
+    // 메시지를 수신자에게 전송
+    if (type === 'message') {
+      if (sockets[to]) {
+        sockets[to].send(JSON.stringify({ from: email, text, type: 'message' }));
+      } else {
+        ws.send(JSON.stringify({ error: 'User not connected' }));
+      }
     }
   
-    ws.on('message', (message) => {
-        const parsedMessage = JSON.parse(message);
-        const { to, text } = parsedMessage;
-      
-        // 수신자가 연결되어 있는지 확인 후 메시지 전송
-        if (sockets[to]) {
-          console.log(`Sending message from ${email} to ${to}: ${text}`);
-          sockets[to].send(JSON.stringify({ from: email, text }));
-        } else {
-          console.log(`User ${to} is not connected`);
-          ws.send(JSON.stringify({ error: `User ${to} not connected` }));
-        }
-      });
-  
-    ws.on('close', () => {
-      delete sockets[email]; // 연결 종료 시 소켓 제거
-    });
+    // 읽음 상태 업데이트
+    if (type === 'read') {
+      if (sockets[to]) {
+        console.log(`Sending read status to ${to} from ${email}`);  // 디버깅용 로그
+        sockets[to].send(JSON.stringify({ from: email, type: 'read', text }));
+      }
+    }
+  });  
+
+  ws.on('close', () => {
+    delete sockets[email]; // 연결 종료 시 소켓 제거
   });
-  
+});
 
 app.get('/', (req, res) => {
   res.send('Hello World!');
