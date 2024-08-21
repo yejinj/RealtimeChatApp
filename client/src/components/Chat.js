@@ -14,42 +14,49 @@ function Chat() {
       navigate('/login');
       return;
     }
-  
+
     const socket = new WebSocket(`ws://localhost:8080?token=${token}`);
-  
+
+    socket.onopen = () => {
+      console.log('WebSocket connection established');
+    };
+
+    socket.onerror = (error) => {
+      console.error('WebSocket error:', error);
+    };
+
     socket.onmessage = (event) => {
       const message = JSON.parse(event.data);
-  
+
       if (message.type === 'message') {
+        console.log('Received message:', message);
         setMessages((prevMessages) => [...prevMessages, message]);
-  
+
         // 메시지를 읽었다는 신호를 서버로 보냄
         socket.send(JSON.stringify({
-          to: message.from,
+          to: recipient, // 여기서 recipient는 메시지를 보낸 사람이므로 주의
           type: 'read',
-          text: message.text,  // 메시지 텍스트를 포함하여 서버에 전송
+          text: message.text,
         }));
       }
-  
+
       if (message.type === 'read') {
-        console.log('Received read status:', message);  // 디버깅용 로그
+        console.log('Received read status:', message);
         setMessages((prevMessages) =>
           prevMessages.map((msg) =>
-            msg.from === 'You' && msg.text === message.text
-              ? { ...msg, read: true }
-              : msg
+            msg.text === message.text ? { ...msg, read: true } : msg
           )
         );
       }
     };
-  
+
     setWs(socket);
-  
+
     return () => {
       if (socket) socket.close();
     };
-  }, [navigate]);
-  
+  }, [navigate, recipient]);
+
   const sendMessage = () => {
     if (ws && ws.readyState === WebSocket.OPEN) {
       const message = {
@@ -57,16 +64,18 @@ function Chat() {
         text: input,
         type: 'message',
       };
-  
+
+      console.log('Sending message:', message);
       ws.send(JSON.stringify(message));
       setMessages((prevMessages) => [
         ...prevMessages,
         { ...message, from: 'You', read: false },
       ]);
       setInput('');
+    } else {
+      console.error('WebSocket is not open. Cannot send message.');
     }
   };
-  
 
   return (
     <div className="chat-container">

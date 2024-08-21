@@ -4,31 +4,37 @@ import { useNavigate } from 'react-router-dom';
 function Signup() {
   const navigate = useNavigate();
   const [signupForm, setSignupForm] = useState({ email: '', username: '', password: '', confirmPassword: '' });
+  const [error, setError] = useState('');
 
   const signup = async () => {
     if (signupForm.password !== signupForm.confirmPassword) {
-      alert('Passwords do not match');
+      setError('Passwords do not match');
       return;
     }
 
-    const response = await fetch('http://localhost:8080/signup', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        email: signupForm.email,
-        username: signupForm.username,
-        password: signupForm.password
-      })
-    });
-
-    const data = await response.json();
-    if (response.ok) {
-      alert('Signup successful!');
+    try {
+      const response = await fetch('http://localhost:8080/signup', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: signupForm.email,
+          username: signupForm.username,
+          password: signupForm.password,
+        }),
+      });
+  
+      if (!response.ok) {
+        throw new Error('Signup failed');
+      }
+  
+      const data = await response.json();
+      console.log('Signup successful:', data);
       navigate('/login');
-    } else {
-      alert(data.message);
+    } catch (error) {
+      console.error('Error during signup:', error);
+      setError('Signup failed. Please try again.');
     }
   };
 
@@ -59,9 +65,22 @@ function Signup() {
         value={signupForm.confirmPassword}
         onChange={(e) => setSignupForm({ ...signupForm, confirmPassword: e.target.value })}
       />
+      {error && <p style={{ color: 'red' }}>{error}</p>}
       <button onClick={signup}>Signup</button>
       <p>
-        Already have an account? <a onClick={() => navigate('/login')}>Login</a>
+        Already have an account? 
+        <button 
+          onClick={() => navigate('/login')} 
+          style={{ 
+            background: 'none', 
+            border: 'none', 
+            color: 'blue', 
+            textDecoration: 'underline', 
+            cursor: 'pointer',
+            padding: 0
+          }}>
+          Login
+        </button>
       </p>
     </div>
   );
