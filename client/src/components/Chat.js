@@ -34,7 +34,7 @@ function Chat() {
 
         // 메시지를 읽었다는 신호를 서버로 보냄
         socket.send(JSON.stringify({
-          to: recipient, // 여기서 recipient는 메시지를 보낸 사람이므로 주의
+          to: message.from, // 메시지를 보낸 사람이 대상
           type: 'read',
           text: message.text,
         }));
@@ -55,7 +55,7 @@ function Chat() {
     return () => {
       if (socket) socket.close();
     };
-  }, [navigate, recipient]);
+  }, [navigate]);
 
   const sendMessage = () => {
     if (ws && ws.readyState === WebSocket.OPEN) {

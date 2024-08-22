@@ -93,7 +93,7 @@ wss.on('connection', (ws, req) => {
       if (type === 'read') {
         console.log(`Sending read status from ${user.username} to ${users[to].username}`);
         if (sockets[to]) {
-          sockets[to].send(JSON.stringify({ from: user.username, text: 'read', type: 'read' }));
+          sockets[to].send(JSON.stringify({ from: user.username, text, type: 'read' }));
         }
       }
     });
