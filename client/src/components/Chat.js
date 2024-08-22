@@ -50,7 +50,7 @@ function Chat() {
       }
 
       if (message.type === 'delete') {
-        console.log('Message deleted:', message);
+        alert('Message deleted:', message);
         setMessages((prevMessages) =>
           prevMessages.filter((msg) => msg.text !== message.text)
         );

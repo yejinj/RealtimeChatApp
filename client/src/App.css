@@ -1,4 +1,3 @@
-/* 전체적인 폰트와 배경 설정 */
 body {
   font-family: 'Arial', sans-serif;
   margin: 0;
@@ -129,25 +128,22 @@ button:hover {
   color: #FFFFFF;
 }
 
-/* 읽었는지 표시하는 기능 추가 */
 .read-status {
   font-size: 0.8em;
-  color: #888;
+  color: hsl(0, 0%, 81%);
   margin-left: 5px;
 }
 
-/* 삭제 버튼 스타일 */
 .delete-button {
+  width: 5px;
+  height: 5px;
   background-color: transparent;
   color: #888888;
-  border: none;
-  font-size: 1.2em;
+  /* font-size: 1em; */
   cursor: pointer;
-  margin-left: 10px;
   position: absolute;
-  right: 10px;
-  top: 50%;
-  transform: translateY(-50%);
+  right: 5%;
+  top: 5%;
 }
 
 .delete-button:hover {
