@@ -3,12 +3,28 @@ import { useNavigate } from 'react-router-dom';
 
 function Signup() {
   const navigate = useNavigate();
-  const [signupForm, setSignupForm] = useState({ email: '', username: '', password: '', confirmPassword: '' });
-  const [error, setError] = useState('');
+  const [signupForm, setSignupForm] = useState({
+    email: '',
+    username: '',
+    password: '',
+    confirmPassword: ''
+  });
+
+  // 이메일 유효성 검사 함수
+  const isValidEmail = (email) => {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  };
 
   const signup = async () => {
+    // 이메일 형식이 올바른지 확인
+    if (!isValidEmail(signupForm.email)) {
+      console.error('Invalid email format');
+      return;
+    }
+
+    // 비밀번호 확인
     if (signupForm.password !== signupForm.confirmPassword) {
-      setError('Passwords do not match');
+      console.error('Passwords do not match');
       return;
     }
 
@@ -24,17 +40,18 @@ function Signup() {
           password: signupForm.password,
         }),
       });
-  
+
       if (!response.ok) {
         throw new Error('Signup failed');
       }
-  
+
       const data = await response.json();
       console.log('Signup successful:', data);
+
+      // 성공적으로 회원가입하면 로그인 페이지로 이동
       navigate('/login');
     } catch (error) {
       console.error('Error during signup:', error);
-      setError('Signup failed. Please try again.');
     }
   };
 
@@ -65,22 +82,9 @@ function Signup() {
         value={signupForm.confirmPassword}
         onChange={(e) => setSignupForm({ ...signupForm, confirmPassword: e.target.value })}
       />
-      {error && <p style={{ color: 'red' }}>{error}</p>}
       <button onClick={signup}>Signup</button>
       <p>
-        Already have an account? 
-        <button 
-          onClick={() => navigate('/login')} 
-          style={{ 
-            background: 'none', 
-            border: 'none', 
-            color: 'blue', 
-            textDecoration: 'underline', 
-            cursor: 'pointer',
-            padding: 0
-          }}>
-          Login
-        </button>
+        Already have an account? <a onClick={() => navigate('/login')}>Login</a>
       </p>
     </div>
   );

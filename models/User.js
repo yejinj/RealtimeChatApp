@@ -1,3 +1,4 @@
+// models/User.js
 const { Sequelize, DataTypes } = require('sequelize');
 const sequelize = new Sequelize({
   dialect: 'sqlite',
@@ -18,8 +19,23 @@ const User = sequelize.define('User', {
     type: DataTypes.STRING,
     allowNull: false,
   },
+  profilePicture: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+  bio: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+  contactInfo: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
 });
 
-sequelize.sync();
+sequelize.sync({ force: true }) // 모든 테이블 재생성 (데이터 손실에 주의)
+  .then(() => {
+    console.log("Database & tables created!");
+  });
 
 module.exports = User;

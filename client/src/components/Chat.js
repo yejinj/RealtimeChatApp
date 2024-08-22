@@ -47,10 +47,10 @@ function Chat() {
             msg.text === message.text && msg.from === 'You' ? { ...msg, read: true } : msg
           )
         );
-      }
+      }           
 
       if (message.type === 'delete') {
-        alert('Message deleted:', message);
+        console.log('Message deleted:', message);
         setMessages((prevMessages) =>
           prevMessages.filter((msg) => msg.text !== message.text)
         );

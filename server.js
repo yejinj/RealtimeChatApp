@@ -27,10 +27,18 @@ app.post('/signup', async (req, res) => {
     }
 
     const hashedPassword = bcrypt.hashSync(password, 8);
-    await User.create({ email, username, password: hashedPassword });
+    await User.create({
+      email,
+      username,
+      password: hashedPassword,
+      profilePicture: '',  // 빈 프로필 기본값
+      bio: '',
+      contactInfo: ''
+    });
 
     res.status(201).json({ message: 'User registered successfully' });
   } catch (error) {
+    console.error('Error during signup:', error);
     res.status(500).json({ message: 'Error creating user', error });
   }
 });
@@ -54,6 +62,7 @@ app.post('/login', async (req, res) => {
 
     res.status(200).json({ message: 'Login successful', token });
   } catch (error) {
+    console.error('Error during login:', error);
     res.status(500).json({ message: 'Error logging in', error });
   }
 });
@@ -64,7 +73,59 @@ app.get('/users', async (req, res) => {
     const users = await User.findAll({ attributes: ['email', 'username'] });
     res.status(200).json(users);
   } catch (error) {
+    console.error('Error retrieving users:', error);
     res.status(500).json({ message: 'Error retrieving users', error });
+  }
+});
+
+// 프로필 정보 조회
+app.get('/profile', async (req, res) => {
+  const token = req.headers.authorization.split(' ')[1];
+
+  try {
+    const decoded = jwt.verify(token, SECRET_KEY);
+    const email = decoded.email;
+
+    const user = await User.findOne({ where: { email } });
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    res.status(200).json({
+      email: user.email,
+      username: user.username,
+      profilePicture: user.profilePicture,
+      bio: user.bio,
+      contactInfo: user.contactInfo,
+    });
+  } catch (error) {
+    console.error('Error fetching profile:', error);
+    res.status(500).json({ message: 'Error fetching profile', error });
+  }
+});
+
+// 프로필 수정
+app.put('/profile', async (req, res) => {
+  const { token, profilePicture, bio, contactInfo } = req.body;
+
+  try {
+    const decoded = jwt.verify(token, SECRET_KEY);
+    const email = decoded.email;
+
+    const user = await User.findOne({ where: { email } });
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    user.profilePicture = profilePicture;
+    user.bio = bio;
+    user.contactInfo = contactInfo;
+    await user.save();
+
+    res.status(200).json({ message: 'Profile updated successfully', user });
+  } catch (error) {
+    console.error('Error updating profile:', error);
+    res.status(500).json({ message: 'Error updating profile', error });
   }
 });
 
@@ -104,9 +165,11 @@ wss.on('connection', async (ws, req) => {
         console.log(`Sending read status from ${user.username} to ${recipient.username}`);
         if (sockets[to]) {
           sockets[to].send(JSON.stringify({ from: user.username, text, type: 'read' }));
+        } else {
+          console.error('Recipient socket not found:', to);
         }
       }
-
+      
       if (type === 'delete') {
         console.log(`Deleting message "${text}" from ${user.username}`);
         if (sockets[to]) {
