@@ -96,6 +96,13 @@ wss.on('connection', (ws, req) => {
           sockets[to].send(JSON.stringify({ from: user.username, text, type: 'read' }));
         }
       }
+
+      if (type === 'delete') {
+        console.log(`Deleting message "${text}" from ${user.username}`);
+        if (sockets[to]) {
+          sockets[to].send(JSON.stringify({ from: user.username, text, type: 'delete' }));
+        }
+      }
     });
 
     ws.on('close', () => {

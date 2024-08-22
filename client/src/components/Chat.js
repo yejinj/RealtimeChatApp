@@ -34,7 +34,7 @@ function Chat() {
 
         // 메시지를 읽었다는 신호를 서버로 보냄
         socket.send(JSON.stringify({
-          to: message.from, // 메시지를 보낸 사람이 대상
+          to: message.from,
           type: 'read',
           text: message.text,
         }));
@@ -44,8 +44,15 @@ function Chat() {
         console.log('Received read status:', message);
         setMessages((prevMessages) =>
           prevMessages.map((msg) =>
-            msg.text === message.text ? { ...msg, read: true } : msg
+            msg.text === message.text && msg.from === 'You' ? { ...msg, read: true } : msg
           )
+        );
+      }
+
+      if (message.type === 'delete') {
+        console.log('Message deleted:', message);
+        setMessages((prevMessages) =>
+          prevMessages.filter((msg) => msg.text !== message.text)
         );
       }
     };
@@ -77,13 +84,41 @@ function Chat() {
     }
   };
 
+  const deleteMessage = (messageText) => {
+    if (ws && ws.readyState === WebSocket.OPEN) {
+      const message = {
+        to: recipient,
+        text: messageText,
+        type: 'delete',
+      };
+
+      console.log('Deleting message:', message);
+      ws.send(JSON.stringify(message));
+      setMessages((prevMessages) =>
+        prevMessages.filter((msg) => msg.text !== messageText)
+      );
+    } else {
+      console.error('WebSocket is not open. Cannot delete message.');
+    }
+  };
+
   return (
     <div className="chat-container">
       <div className="messages">
         {messages.map((message, index) => (
           <div key={index} className={`message ${message.from === 'You' ? 'sent' : 'received'}`}>
-            <strong>{message.from}:</strong> {message.text}
-            {message.from === 'You' && message.read && <span className="read-status"> (Read)</span>}
+            <div className="message-content">
+              <strong>{message.from}:</strong> {message.text}
+              {message.from === 'You' && message.read && <span className="read-status"> (Read)</span>}
+            </div>
+            {message.from === 'You' && (
+              <button
+                className="delete-button"
+                onClick={() => deleteMessage(message.text)}
+              >
+                ✖
+              </button>
+            )}
           </div>
         ))}
       </div>

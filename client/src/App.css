@@ -3,8 +3,8 @@ body {
   font-family: 'Arial', sans-serif;
   margin: 0;
   padding: 0;
-  background-color: #F0F0F0; /* 연한 회색 배경 */
-  color: #333333; /* 어두운 회색 텍스트 */
+  background-color: #F0F0F0;
+  color: #333333;
 }
 
 .app-container {
@@ -16,7 +16,7 @@ body {
 
 .auth-container, .chat-container {
   width: 350px;
-  background-color: #FFFFFF; /* 흰색 배경 */
+  background-color: #FFFFFF;
   padding: 20px;
   border-radius: 10px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
@@ -25,7 +25,7 @@ body {
 .auth-container h2, .chat-container h2 {
   margin-bottom: 20px;
   text-align: center;
-  color: #2C3E50; /* 진한 네이비 */
+  color: #2C3E50;
 }
 
 input[type="email"], input[type="text"], input[type="password"], .message-input, .recipient-input {
@@ -35,14 +35,14 @@ input[type="email"], input[type="text"], input[type="password"], .message-input,
   border: 1px solid #ddd;
   border-radius: 5px;
   box-sizing: border-box;
-  background-color: #F0F0F0; /* 연한 회색 */
-  color: #333333; /* 어두운 회색 텍스트 */
+  background-color: #F0F0F0;
+  color: #333333;
 }
 
 button {
   width: 100%;
   padding: 10px;
-  background-color: #2C3E50; /* 진한 네이비 */
+  background-color: #2C3E50;
   color: #FFFFFF;
   border: none;
   border-radius: 5px;
@@ -50,7 +50,7 @@ button {
 }
 
 button:hover {
-  background-color: #1A252F; /* 더 어두운 네이비 */
+  background-color: #1A252F;
   color: #FFFFFF;
 }
 
@@ -64,7 +64,7 @@ button:hover {
   flex: 1;
   overflow-y: auto;
   margin-bottom: 20px;
-  background-color: #FFFFFF; /* 흰색 배경 */
+  background-color: #FFFFFF;
   border-radius: 10px;
   padding: 10px;
   box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.05);
@@ -74,20 +74,28 @@ button:hover {
   margin-bottom: 10px;
   padding: 10px;
   border-radius: 5px;
-  background-color: #F0F0F0; /* 연한 회색 */
-  color: #333333; /* 어두운 회색 텍스트 */
+  background-color: #F0F0F0;
+  color: #333333;
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.message-content {
+  flex-grow: 1;
 }
 
 .sent {
-  background-color: #2C3E50; /* 진한 네이비 */
+  background-color: #2C3E50;
   align-self: flex-end;
   color: #FFFFFF;
 }
 
 .received {
-  background-color: #F0F0F0; /* 연한 회색 */
+  background-color: #F0F0F0;
   align-self: flex-start;
-  color: #333333; /* 어두운 회색 텍스트 */
+  color: #333333;
 }
 
 .input-container {
@@ -97,33 +105,51 @@ button:hover {
 .recipient-input {
   width: 30%;
   margin-right: 10px;
-  background-color: #F0F0F0; /* 연한 회색 */
+  background-color: #F0F0F0;
   border: 1px solid #ddd;
 }
 
 .message-input {
   flex: 1;
   margin-right: 10px;
-  background-color: #F0F0F0; /* 연한 회색 */
+  background-color: #F0F0F0;
   border: 1px solid #ddd;
 }
 
 .send-button {
   width: 100px;
-  background-color: #2C3E50; /* 진한 네이비 */
+  background-color: #2C3E50;
   color: #FFFFFF;
   border-radius: 5px;
   cursor: pointer;
 }
 
 .send-button:hover {
-  background-color: #1A252F; /* 더 어두운 네이비 */
+  background-color: #1A252F;
   color: #FFFFFF;
 }
 
 /* 읽었는지 표시하는 기능 추가 */
 .read-status {
   font-size: 0.8em;
-  color: #888; /* 회색으로 표시하여 강조하지 않음 */
+  color: #888;
   margin-left: 5px;
+}
+
+/* 삭제 버튼 스타일 */
+.delete-button {
+  background-color: transparent;
+  color: #888888;
+  border: none;
+  font-size: 1.2em;
+  cursor: pointer;
+  margin-left: 10px;
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.delete-button:hover {
+  color: #555555;
 }
