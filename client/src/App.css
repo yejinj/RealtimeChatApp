@@ -198,3 +198,60 @@ button:hover {
 .profile-container button:hover {
   background-color: #0056b3;
 }
+
+.users-list-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.users-list-container h2 {
+  text-align: center;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+.users-list-container ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.users-list-container li {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+  padding: 15px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: box-shadow 0.3s ease;
+}
+
+.users-list-container li:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.users-list-container img {
+  margin-right: 20px;
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+}
+
+.users-list-container div {
+  flex-grow: 1;
+}
+
+.users-list-container div p {
+  margin: 5px 0;
+  color: #555;
+}
+
+.users-list-container div p strong {
+  color: #333;
+}
+

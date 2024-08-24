@@ -193,6 +193,19 @@ app.get('/', (req, res) => {
   res.send('Hello World!');
 });
 
+// 전체 사용자 목록 조회 API
+app.get('/users', async (req, res) => {
+  try {
+    const users = await User.findAll({
+      attributes: ['email', 'username', 'profilePicture', 'bio', 'contactInfo', 'mbti'],
+    });
+    res.status(200).json(users);
+  } catch (error) {
+    console.error('Error retrieving users:', error);
+    res.status(500).json({ message: 'Error retrieving users', error });
+  }
+});
+
 server.listen(8080, () => {
   console.log('Server started on http://localhost:8080');
 });
