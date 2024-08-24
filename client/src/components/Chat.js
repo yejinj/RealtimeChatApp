@@ -137,6 +137,12 @@ function Chat() {
         />
         <button className="send-button" onClick={sendMessage}>Send</button>
       </div>
+
+      <div className="bottom-nav">
+        <button onClick={() => navigate('/profile')}> My Profile </button>
+        <button onClick={() => navigate('/users')}> Users </button>
+        <button onClick={() => navigate('/chat')}> Chat </button>
+      </div>
     </div>
   );
 }

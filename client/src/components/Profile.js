@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
 
 function Profile() {
   const [profile, setProfile] = useState({
@@ -129,11 +128,6 @@ function Profile() {
       ) : (
         <button onClick={() => setIsEditing(true)}>Edit</button>
       )}
-
-      {/* 사용자 목록으로 이동하는 링크 추가 */}
-      <div>
-        <Link to="/users">View All Users</Link>
-      </div>
     </div>
   );
 }
