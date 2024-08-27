@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';  // Link를 임포트합니다.
 
 function UsersList() {
   const [users, setUsers] = useState([]);
@@ -22,18 +23,15 @@ function UsersList() {
       <h2>Registered Users</h2>
       <ul>
         {users.map((user, index) => (
-          <li key={index} className="user-card">
-            <img 
-              src={user.profilePicture || 'default-avatar.png'} 
-              alt={`${user.username}'s profile`} 
-              className="user-avatar"
-            />
-            <div className="user-details">
+          <li key={index}>
+            <img src={user.profilePicture} alt={`${user.username}'s profile`} width="50" />
+            <div>
               <p><strong>Username:</strong> {user.username}</p>
               <p><strong>Email:</strong> {user.email}</p>
-              <p><strong>Bio:</strong> {user.bio || 'No bio available'}</p>
-              <p><strong>Contact Info:</strong> {user.contactInfo || 'No contact info available'}</p>
-              <p><strong>MBTI:</strong> {user.mbti || 'Not provided'}</p>
+              <p><strong>Bio:</strong> {user.bio}</p>
+              <p><strong>Contact Info:</strong> {user.contactInfo}</p>
+              <p><strong>MBTI:</strong> {user.mbti}</p>
+              <Link to={`/profile/${user.email}`}>View Profile</Link> {/* 프로필 페이지로 이동하는 링크 */}
             </div>
           </li>
         ))}

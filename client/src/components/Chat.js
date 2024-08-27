@@ -143,6 +143,7 @@ function Chat() {
         <button onClick={() => navigate('/users')}> Users </button>
         <button onClick={() => navigate('/chat')}> Chat </button>
       </div>
+
     </div>
   );
 }

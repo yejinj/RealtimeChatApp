@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
 
 function Profile() {
+  const { email } = useParams(); // useParams로 이메일 파라미터 가져오기
   const [profile, setProfile] = useState({
     email: '',
     username: '',
@@ -16,21 +18,26 @@ function Profile() {
     const fetchProfile = async () => {
       const token = localStorage.getItem('token');
       try {
-        const response = await fetch('http://localhost:8080/profile', {
+        const response = await fetch(`http://localhost:8080/profile/${email}`, {
           method: 'GET',
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
+        
+        if (!response.ok) {
+          throw new Error(`Failed to fetch profile: ${response.statusText}`);
+        }
+  
         const data = await response.json();
         setProfile(data);
       } catch (error) {
         console.error('Error fetching profile:', error);
       }
     };
-
+  
     fetchProfile();
-  }, []);
+  }, [email]);  
 
   const handleInputChange = (e) => {
     setProfile({ ...profile, [e.target.name]: e.target.value });
@@ -67,7 +74,7 @@ function Profile() {
 
   return (
     <div className="profile-container">
-      <h2>My Profile</h2>
+      <h2>{profile.username}'s Profile</h2>
       {profile.profilePicture && <img src={profile.profilePicture} alt="Profile" />}
       
       <div>

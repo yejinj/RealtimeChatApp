@@ -206,6 +206,22 @@ app.get('/users', async (req, res) => {
   }
 });
 
+
+app.get('/profile/:email', async (req, res) => {
+  const { email } = req.params;
+
+  try {
+    const user = await User.findOne({ where: { email } });
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    res.status(200).json(user);
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching profile', error });
+  }
+});
+
 server.listen(8080, () => {
   console.log('Server started on http://localhost:8080');
 });
