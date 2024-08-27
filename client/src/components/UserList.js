@@ -22,14 +22,18 @@ function UsersList() {
       <h2>Registered Users</h2>
       <ul>
         {users.map((user, index) => (
-          <li key={index}>
-            <img src={user.profilePicture} alt={`${user.username}'s profile`} width="50" />
-            <div>
+          <li key={index} className="user-card">
+            <img 
+              src={user.profilePicture || 'default-avatar.png'} 
+              alt={`${user.username}'s profile`} 
+              className="user-avatar"
+            />
+            <div className="user-details">
               <p><strong>Username:</strong> {user.username}</p>
               <p><strong>Email:</strong> {user.email}</p>
-              <p><strong>Bio:</strong> {user.bio}</p>
-              <p><strong>Contact Info:</strong> {user.contactInfo}</p>
-              <p><strong>MBTI:</strong> {user.mbti}</p>
+              <p><strong>Bio:</strong> {user.bio || 'No bio available'}</p>
+              <p><strong>Contact Info:</strong> {user.contactInfo || 'No contact info available'}</p>
+              <p><strong>MBTI:</strong> {user.mbti || 'Not provided'}</p>
             </div>
           </li>
         ))}

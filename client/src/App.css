@@ -220,6 +220,7 @@ button:hover {
   text-align: center;
   color: #333;
   margin-bottom: 20px;
+  font-size: 24px;
 }
 
 .users-list-container ul {
@@ -261,6 +262,59 @@ button:hover {
 
 .users-list-container div p strong {
   color: #333;
+}
+
+.user-card {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+  padding: 15px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: box-shadow 0.3s ease, transform 0.3s ease;
+}
+
+.user-card:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  transform: translateY(-5px);
+}
+
+.user-card img {
+  margin-right: 20px;
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+}
+
+.user-card div {
+  flex-grow: 1;
+}
+
+.user-card div p {
+  margin: 5px 0;
+  color: #555;
+  font-size: 16px;
+}
+
+.user-card div p strong {
+  color: #333;
+  font-size: 18px;
+}
+
+.user-card button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.user-card button:hover {
+  background-color: #0056b3;
 }
 
 .app-header {
