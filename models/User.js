@@ -1,5 +1,4 @@
 // models/User.js
-
 const { Sequelize, DataTypes } = require('sequelize');
 const sequelize = new Sequelize({
   dialect: 'sqlite',
@@ -38,8 +37,7 @@ const User = sequelize.define('User', {
   },
 });
 
-// 아래 코드가 테이블을 동기화합니다.
-// force: true를 사용하면 기존 테이블이 삭제되고 새로 생성됩니다. (개발용)
+// 아래 코드가 테이블을 동기화
 sequelize.sync({ force: true })
   .then(() => {
     console.log("Database & tables created!");

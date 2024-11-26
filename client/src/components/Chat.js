@@ -141,7 +141,6 @@ function Chat() {
       <div className="bottom-nav">
         <button onClick={() => navigate('/profile')}> My Profile </button>
         <button onClick={() => navigate('/users')}> Users </button>
-        <button onClick={() => navigate('/chat')}> Chat </button>
       </div>
 
     </div>
