@@ -428,3 +428,11 @@ button:hover {
 .bottom-nav button:active {
   background-color: #333;
 }
+
+.error-message {
+  color: #ff0000;
+  padding: 10px;
+  margin: 10px 0;
+  background-color: #ffebee;
+  border-radius: 4px;
+}

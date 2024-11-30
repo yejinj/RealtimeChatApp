@@ -7,28 +7,36 @@ import Profile from './components/Profile';
 import UsersList from './components/UserList';
 import './App.css';
 
+const ROUTES = [
+  { path: '/signup', Component: Signup },
+  { path: '/login', Component: Login },
+  { path: '/chat', Component: Chat },
+  { path: '/profile', Component: Profile },
+  { path: '/users', Component: UsersList },
+  { path: '/', Component: Login },
+];
+
 function App() {
   const [isDarkMode, setIsDarkMode] = useState(false);
 
-  const toggleDarkMode = () => {
-    setIsDarkMode(!isDarkMode);
-  };
-
+  const toggleDarkMode = () => setIsDarkMode(prev => !prev);
+  
   return (
     <Router>
       <div className={`app-container ${isDarkMode ? 'dark-mode' : ''}`}>
         <header className="app-header">
-          <button className="dark-mode-toggle" onClick={toggleDarkMode}>
+          <button 
+            className="dark-mode-toggle" 
+            onClick={toggleDarkMode}
+            aria-label="Toggle dark mode"
+          >
             {isDarkMode ? 'Light Mode' : 'Dark Mode'}
           </button>
         </header>
         <Routes>
-          <Route path="/signup" element={<Signup />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/chat" element={<Chat />} />
-          <Route path="/profile" element={<Profile />} />
-          <Route path="/users" element={<UsersList />} />
-          <Route path="/" element={<Login />} />
+          {ROUTES.map(({ path, Component }) => (
+            <Route key={path} path={path} element={<Component />} />
+          ))}
         </Routes>
       </div>
     </Router>

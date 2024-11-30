@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 
 function Profile() {
-  const { email } = useParams(); // useParams로 이메일 파라미터 가져오기
+  const { email } = useParams();
   const [profile, setProfile] = useState({
     email: '',
     username: '',
@@ -13,9 +13,13 @@ function Profile() {
   });
 
   const [isEditing, setIsEditing] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchProfile = async () => {
+      setIsLoading(true);
+      setError(null);
       const token = localStorage.getItem('token');
       try {
         const response = await fetch(`http://localhost:8080/profile/${email}`, {
@@ -32,7 +36,10 @@ function Profile() {
         const data = await response.json();
         setProfile(data);
       } catch (error) {
+        setError('프로필을 불러오는데 실패했습니다.');
         console.error('Error fetching profile:', error);
+      } finally {
+        setIsLoading(false);
       }
     };
   
@@ -44,15 +51,17 @@ function Profile() {
   };
 
   const handleSave = async () => {
+    setIsLoading(true);
+    setError(null);
     const token = localStorage.getItem('token');
     try {
       const response = await fetch('http://localhost:8080/profile', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
         },
         body: JSON.stringify({
-          token,
           profilePicture: profile.profilePicture,
           bio: profile.bio,
           contactInfo: profile.contactInfo,
@@ -65,15 +74,23 @@ function Profile() {
         const updatedProfile = await response.json();
         setProfile(updatedProfile.user);
       } else {
-        console.error('Failed to update profile');
+        setError('프로필 업데이트에 실패했습니다.');
       }
     } catch (error) {
+      setError('서버 연결에 실패했습니다.');
       console.error('Error updating profile:', error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
+  if (isLoading && !profile.email) {
+    return <div>로딩 중...</div>;
+  }
+
   return (
     <div className="profile-container">
+      {error && <div className="error-message">{error}</div>}
       <h2>{profile.username}'s Profile</h2>
       {profile.profilePicture && <img src={profile.profilePicture} alt="Profile" />}
       
@@ -131,9 +148,13 @@ function Profile() {
       </div>
 
       {isEditing ? (
-        <button onClick={handleSave}>Save</button>
+        <button onClick={handleSave} disabled={isLoading}>
+          {isLoading ? '저장 중...' : '저장'}
+        </button>
       ) : (
-        <button onClick={() => setIsEditing(true)}>Edit</button>
+        <button onClick={() => setIsEditing(true)} disabled={isLoading}>
+          수정
+        </button>
       )}
     </div>
   );
