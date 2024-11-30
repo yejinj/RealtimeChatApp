@@ -436,3 +436,41 @@ button:hover {
   background-color: #ffebee;
   border-radius: 4px;
 }
+
+/* MBTI 선택 스타일 추가 */
+.mbti-select {
+  padding: 8px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  font-size: 16px;
+  width: 200px;
+  margin: 5px 0;
+}
+
+.mbti-select:disabled {
+  background-color: #f5f5f5;
+  cursor: not-allowed;
+}
+
+.mbti-select:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 0 2px rgba(0,123,255,0.25);
+}
+
+/* 다크모드에서 MBTI 선택 스타일 */
+.dark-mode .mbti-select {
+  background-color: #333;
+  color: #ffffff;
+  border-color: #555;
+}
+
+.dark-mode .mbti-select:disabled {
+  background-color: #222;
+  color: #666;
+}
+
+.dark-mode .mbti-select option {
+  background-color: #333;
+  color: #ffffff;
+}

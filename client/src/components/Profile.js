@@ -1,6 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 
+const MBTI_OPTIONS = [
+  'INTJ', 'INTP', 'ENTJ', 'ENTP',
+  'INFJ', 'INFP', 'ENFJ', 'ENFP',
+  'ISTJ', 'ISFJ', 'ESTJ', 'ESFJ',
+  'ISTP', 'ISFP', 'ESTP', 'ESFP'
+];
+
 function Profile() {
   const { email } = useParams();
   const [profile, setProfile] = useState({
@@ -62,6 +69,7 @@ function Profile() {
           'Authorization': `Bearer ${token}`,
         },
         body: JSON.stringify({
+          token,
           profilePicture: profile.profilePicture,
           bio: profile.bio,
           contactInfo: profile.contactInfo,
@@ -91,71 +99,119 @@ function Profile() {
   return (
     <div className="profile-container">
       {error && <div className="error-message">{error}</div>}
-      <h2>{profile.username}'s Profile</h2>
-      {profile.profilePicture && <img src={profile.profilePicture} alt="Profile" />}
+      <h2>{profile.username}의 프로필</h2>
       
-      <div>
-        <label>Email:</label>
-        <input type="text" name="email" value={profile.email} readOnly />
-      </div>
+      <div className="profile-section">
+        {profile.profilePicture && (
+          <div className="profile-image-container">
+            <img 
+              src={profile.profilePicture} 
+              alt="Profile" 
+              className="profile-image"
+            />
+          </div>
+        )}
+        
+        <div className="profile-fields">
+          <div className="form-group">
+            <label>이메일:</label>
+            <input 
+              type="text" 
+              name="email" 
+              value={profile.email} 
+              readOnly 
+              className="form-input"
+            />
+          </div>
 
-      <div>
-        <label>Username:</label>
-        <input type="text" name="username" value={profile.username} readOnly />
-      </div>
+          <div className="form-group">
+            <label>사용자명:</label>
+            <input 
+              type="text" 
+              name="username" 
+              value={profile.username} 
+              readOnly 
+              className="form-input"
+            />
+          </div>
 
-      <div>
-        <label>Profile Picture URL:</label>
-        <input
-          type="text"
-          name="profilePicture"
-          value={profile.profilePicture}
-          onChange={handleInputChange}
-          disabled={!isEditing}
-        />
-      </div>
+          <div className="form-group">
+            <label>프로필 사진 URL:</label>
+            <input
+              type="text"
+              name="profilePicture"
+              value={profile.profilePicture}
+              onChange={handleInputChange}
+              disabled={!isEditing}
+              className="form-input"
+              placeholder="프로필 사진 URL을 입력하세요"
+            />
+          </div>
 
-      <div>
-        <label>Bio:</label>
-        <textarea
-          name="bio"
-          value={profile.bio}
-          onChange={handleInputChange}
-          disabled={!isEditing}
-        />
-      </div>
+          <div className="form-group">
+            <label>자기소개:</label>
+            <textarea
+              name="bio"
+              value={profile.bio}
+              onChange={handleInputChange}
+              disabled={!isEditing}
+              className="form-textarea"
+              placeholder="자기소개를 입력하세요"
+            />
+          </div>
 
-      <div>
-        <label>Contact Info:</label>
-        <input
-          type="text"
-          name="contactInfo"
-          value={profile.contactInfo}
-          onChange={handleInputChange}
-          disabled={!isEditing}
-        />
-      </div>
+          <div className="form-group">
+            <label>연락처:</label>
+            <input
+              type="text"
+              name="contactInfo"
+              value={profile.contactInfo}
+              onChange={handleInputChange}
+              disabled={!isEditing}
+              className="form-input"
+              placeholder="연락처를 입력하세요"
+            />
+          </div>
 
-      <div>
-        <label>MBTI:</label>
-        <input
-          type="text"
-          name="mbti"
-          value={profile.mbti}
-          onChange={handleInputChange}
-          disabled={!isEditing}
-        />
-      </div>
+          <div className="form-group">
+            <label>MBTI:</label>
+            <select
+              name="mbti"
+              value={profile.mbti || ''}
+              onChange={handleInputChange}
+              disabled={!isEditing}
+              className="form-select"
+            >
+              <option value="">MBTI 선택</option>
+              {MBTI_OPTIONS.map(type => (
+                <option key={type} value={type}>
+                  {type}
+                </option>
+              ))}
+            </select>
+          </div>
 
-      {isEditing ? (
-        <button onClick={handleSave} disabled={isLoading}>
-          {isLoading ? '저장 중...' : '저장'}
-        </button>
-      ) : (
-        <button onClick={() => setIsEditing(true)} disabled={isLoading}>
-          수정
-        </button>
-      )}
+          <div className="button-group">
+            {isEditing ? (
+              <button 
+                onClick={handleSave} 
+                disabled={isLoading}
+                className="save-button"
+              >
+                {isLoading ? '저장 중...' : '저장'}
+              </button>
+            ) : (
+              <button 
+                onClick={() => setIsEditing(true)} 
+                disabled={isLoading}
+                className="edit-button"
+              >
+                수정
+              </button>
+            )}
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

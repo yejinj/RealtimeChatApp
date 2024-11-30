@@ -4,17 +4,21 @@ const WebSocket = require('ws');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const cors = require('cors');
-const User = require('./models/User'); // User 모델 불러오기
+const User = require('./models/User');
 
 const app = express();
 const server = http.createServer(app);
 const wss = new WebSocket.Server({ server });
 
 const SECRET_KEY = 'your_secret_key';
-const sockets = {}; // 사용자별 WebSocket 연결 관리
+const sockets = {};
 
 app.use(cors());
 app.use(express.json());
+
+app.get('/', (req, res) => {
+  res.send('Hello World!');
+});
 
 // 회원가입
 app.post('/signup', async (req, res) => {
@@ -31,7 +35,7 @@ app.post('/signup', async (req, res) => {
       email,
       username,
       password: hashedPassword,
-      profilePicture: '',  // 빈 프로필 기본값
+      profilePicture: '',
       bio: '',
       contactInfo: ''
     });
@@ -67,10 +71,12 @@ app.post('/login', async (req, res) => {
   }
 });
 
-// 사용자 정보 조회
+// 전체 사용자 목록 조회
 app.get('/users', async (req, res) => {
   try {
-    const users = await User.findAll({ attributes: ['email', 'username'] });
+    const users = await User.findAll({
+      attributes: ['email', 'username', 'profilePicture', 'bio', 'contactInfo', 'mbti'],
+    });
     res.status(200).json(users);
   } catch (error) {
     console.error('Error retrieving users:', error);
@@ -104,6 +110,22 @@ app.get('/profile', async (req, res) => {
   }
 });
 
+// 특정 사용자 프로필 조회
+app.get('/profile/:email', async (req, res) => {
+  const { email } = req.params;
+
+  try {
+    const user = await User.findOne({ where: { email } });
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    res.status(200).json(user);
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching profile', error });
+  }
+});
+
 // 프로필 수정
 app.put('/profile', async (req, res) => {
   const { token, profilePicture, bio, contactInfo } = req.body;
@@ -129,7 +151,7 @@ app.put('/profile', async (req, res) => {
   }
 });
 
-// WebSocket 연결 관리 및 메시지 처리 로직
+// WebSocket 연결 관리 및 메시지 처리
 wss.on('connection', async (ws, req) => {
   const token = req.url.split('?token=')[1];
   let email;
@@ -144,7 +166,7 @@ wss.on('connection', async (ws, req) => {
       return;
     }
 
-    sockets[email] = ws; // 사용자별 WebSocket 저장
+    sockets[email] = ws;
     console.log(`User ${user.username} connected`);
 
     ws.on('message', async (message) => {
@@ -186,39 +208,6 @@ wss.on('connection', async (ws, req) => {
   } catch (err) {
     ws.close();
     console.error('WebSocket error:', err);
-  }
-});
-
-app.get('/', (req, res) => {
-  res.send('Hello World!');
-});
-
-// 전체 사용자 목록 조회 API
-app.get('/users', async (req, res) => {
-  try {
-    const users = await User.findAll({
-      attributes: ['email', 'username', 'profilePicture', 'bio', 'contactInfo', 'mbti'],
-    });
-    res.status(200).json(users);
-  } catch (error) {
-    console.error('Error retrieving users:', error);
-    res.status(500).json({ message: 'Error retrieving users', error });
-  }
-});
-
-
-app.get('/profile/:email', async (req, res) => {
-  const { email } = req.params;
-
-  try {
-    const user = await User.findOne({ where: { email } });
-    if (!user) {
-      return res.status(404).json({ message: 'User not found' });
-    }
-
-    res.status(200).json(user);
-  } catch (error) {
-    res.status(500).json({ message: 'Error fetching profile', error });
   }
 });
 
